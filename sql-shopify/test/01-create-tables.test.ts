@@ -11,25 +11,74 @@ import {
 } from "../src/shopify-table-names";
 import { tableInfo, indexList } from "../src/queries/table-info";
 
-const CREATE_APPS_TABLE = `todo`;
+const CREATE_APPS_TABLE = `CREATE TABLE apps(
+    id integer not null,
+    url text not null,
+    title text not null,
+    tagline text not null,
+    developer text not null,
+    developer_link text not null,
+    icon text not null,
+    rating real not null,
+    reviews_count integer not null,
+    description text not null,
+    pricing_hint text,
+    PRIMARY KEY (id)
+)`;
 
-const CREATE_CATEGORIES_TABLE = `todo`;
+const CREATE_CATEGORIES_TABLE = `CREATE TABLE categories(
+    id integer not null,
+    title text not null,
+    PRIMARY KEY (id)
+)`;
 
-const CREATE_APPS_CATEGORIES_TABLE = `todo`;
+const CREATE_APPS_CATEGORIES_TABLE = `CREATE TABLE apps_categories(
+    app_id integer not null,
+    category_id integer not null,
+    PRIMARY KEY (app_id, category_id),
+    FOREIGN KEY (app_id) references apps(id) ON DELETE RESTRICT, 
+    FOREIGN KEY (category_id) references categories(id) ON DELETE RESTRICT
+)`;
 
-const CREATE_KEY_BENEFITS_TABLE = `todo`;
+const CREATE_KEY_BENEFITS_TABLE = `CREATE TABLE key_benefits(
+    app_id integer not null,
+    title text not null,
+    description text not null,
+    PRIMARY KEY (app_id, title),
+    FOREIGN KEY (app_id) references apps(id) ON DELETE RESTRICT
+)`;
 
-const CREATE_PRICING_PLANS_TABLE = `todo`;
+const CREATE_PRICING_PLANS_TABLE = `CREATE TABLE pricing_plans(
+    id integer not null,
+    price text not null,
+    PRIMARY KEY (id)
+)`;
 
-const CREATE_APPS_PRICING_PLANS_TABLE = `todo`;
+const CREATE_APPS_PRICING_PLANS_TABLE = `CREATE TABLE apps_pricing_plans(
+    app_id integer not null,
+    pricing_plan_id integer not null,
+    PRIMARY KEY (app_id, pricing_plan_id),
+    FOREIGN KEY (app_id) references apps(id) ON DELETE RESTRICT,
+    FOREIGN KEY (pricing_plan_id) references pricing_plans(id) ON DELETE RESTRICT
+)`;
 
-const CREATE_REVIEWS_TABLE = `todo`;
+const CREATE_REVIEWS_TABLE = `CREATE TABLE reviews (
+    app_id integer not null,
+    author text not null,
+    body text not null,
+    rating integer not null,
+    helpful_count integer not null,
+    date_created text not null,
+    developer_reply text,
+    developer_reply_date text,
+    FOREIGN KEY (app_id) references apps(id)
+)`;
 
-const CREATE_INDEX_REVIEWS_AUTHOR = `todo`;
+const CREATE_INDEX_REVIEWS_AUTHOR = `CREATE INDEX reviews_author_idx ON reviews(author)`;
 
-const CREATE_INDEX_PRICING_PLANS_PRICE = `todo`;
+const CREATE_INDEX_PRICING_PLANS_PRICE = `CREATE INDEX pricing_plans_price_idx ON pricing_plans(price)`;
 
-const CREATE_UNIQUE_INDEX_APPS_ID = `todo`;
+const CREATE_UNIQUE_INDEX_APPS_ID = `CREATE UNIQUE INDEX apps_id_unq_idx ON apps(id)`;
 
 describe("Create Tables", () => {
     let db: Database;
